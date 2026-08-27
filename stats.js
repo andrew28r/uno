@@ -510,7 +510,7 @@ function renderStats() {
         </div>
 
         <div>
-            Edit
+            
         </div>
 
     `;
