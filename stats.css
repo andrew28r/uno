@@ -46,7 +46,7 @@ h1 {
 
 
 /* =========================
-   PLAYER STAT CARD
+   PLAYER CARD
 ========================= */
 
 .player-stat {
@@ -80,11 +80,11 @@ h1 {
 .player-stat-name {
     margin-bottom: 15px;
 
+    padding-right: 90px;
+
     font-size: 24px;
 
     font-weight: bold;
-
-    padding-right: 90px;
 
     overflow: hidden;
 
@@ -95,7 +95,7 @@ h1 {
 
 
 /* =========================
-   STAT ROW
+   STATS ROW
 ========================= */
 
 .stat-row {
@@ -283,9 +283,9 @@ h1 {
 
     justify-content: space-between;
 
-    margin-bottom: 12px;
-
     gap: 15px;
+
+    margin-bottom: 12px;
 }
 
 

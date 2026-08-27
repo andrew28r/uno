@@ -81,7 +81,7 @@ const closeEditPlayerButton =
 
 
 // =========================
-// LOAD DATA
+// LOAD STATS
 // =========================
 
 async function loadStats() {
@@ -96,7 +96,7 @@ async function loadStats() {
     try {
 
         // =========================
-        // GET PLAYERS
+        // LOAD PLAYERS
         // =========================
 
         const {
@@ -122,7 +122,7 @@ async function loadStats() {
 
 
         // =========================
-        // GET GAMES
+        // LOAD GAMES
         // =========================
 
         const {
@@ -173,11 +173,11 @@ async function loadStats() {
 
 
 // =========================
-// GET PLAYER STATS
+// GET ACTUAL PLAYER STATS
 // =========================
 
-function getPlayerStats(
-    player
+function getActualPlayerStats(
+    playerId
 ) {
 
     let gamesPlayed = 0;
@@ -186,10 +186,6 @@ function getPlayerStats(
 
     let stars = 0;
 
-
-    // =========================
-    // CALCULATE FROM GAMES
-    // =========================
 
     allGames.forEach(
         game => {
@@ -211,7 +207,7 @@ function getPlayerStats(
                     id =>
 
                         String(id) ===
-                        String(player.id)
+                        String(playerId)
                 );
 
 
@@ -229,7 +225,7 @@ function getPlayerStats(
             if (
                 game.winner_id &&
                 String(game.winner_id) ===
-                    String(player.id)
+                    String(playerId)
             ) {
 
                 wins++;
@@ -248,7 +244,7 @@ function getPlayerStats(
             ) {
 
                 const playerStars =
-                    game.stars[player.id];
+                    game.stars[playerId];
 
 
                 if (
@@ -268,9 +264,31 @@ function getPlayerStats(
     );
 
 
-    // =========================
-    // ADD MANUAL ADJUSTMENTS
-    // =========================
+    return {
+
+        gamesPlayed,
+
+        wins,
+
+        stars
+
+    };
+}
+
+
+// =========================
+// GET DISPLAYED PLAYER STATS
+// =========================
+
+function getPlayerStats(
+    player
+) {
+
+    const actualStats =
+        getActualPlayerStats(
+            player.id
+        );
+
 
     const gamesAdjustment =
         Number(
@@ -290,20 +308,23 @@ function getPlayerStats(
         ) || 0;
 
 
-    gamesPlayed +=
+    let gamesPlayed =
+        actualStats.gamesPlayed +
         gamesAdjustment;
 
 
-    wins +=
+    let wins =
+        actualStats.wins +
         winsAdjustment;
 
 
-    stars +=
+    let stars =
+        actualStats.stars +
         starsAdjustment;
 
 
     // =========================
-    // DON'T SHOW NEGATIVE TOTALS
+    // PREVENT NEGATIVE VALUES
     // =========================
 
     gamesPlayed =
@@ -364,7 +385,7 @@ function renderStats() {
 
 
     // =========================
-    // BUILD STATS
+    // ADD STATS TO PLAYERS
     // =========================
 
     const playersWithStats =
@@ -390,11 +411,13 @@ function renderStats() {
 
 
     // =========================
-    // SORT
+    // SORT PLAYERS
     // =========================
 
     playersWithStats.sort(
         (a, b) => {
+
+            // Wins
 
             if (
                 b.wins !==
@@ -409,6 +432,8 @@ function renderStats() {
             }
 
 
+            // Stars
+
             if (
                 b.stars !==
                 a.stars
@@ -421,6 +446,8 @@ function renderStats() {
 
             }
 
+
+            // Name
 
             return a.name.localeCompare(
                 b.name
@@ -516,7 +543,7 @@ function createPlayerCard(
 
 
     // =========================
-    // EDIT
+    // EDIT BUTTON
     // =========================
 
     const editButton =
@@ -554,12 +581,16 @@ function openEditPlayer(
 
 
     // =========================
-    // CURRENT DISPLAYED VALUES
+    // PLAYER NAME
     // =========================
 
     editPlayerName.value =
         player.name;
 
+
+    // =========================
+    // CURRENT STATS
+    // =========================
 
     editGames.value =
         player.gamesPlayed;
@@ -572,6 +603,10 @@ function openEditPlayer(
     editStars.value =
         player.stars;
 
+
+    // =========================
+    // OPEN POPUP
+    // =========================
 
     editPlayerPopup.classList.remove(
         "hidden"
@@ -586,7 +621,7 @@ function openEditPlayer(
 
 
 // =========================
-// CLOSE EDIT POPUP
+// CLOSE EDIT PLAYER
 // =========================
 
 function closeEditPlayer() {
@@ -629,6 +664,10 @@ async function savePlayer() {
     }
 
 
+    // =========================
+    // NAME
+    // =========================
+
     const name =
         editPlayerName.value.trim();
 
@@ -648,7 +687,7 @@ async function savePlayer() {
 
 
     // =========================
-    // GET VALUES
+    // NUMBERS
     // =========================
 
     const desiredGames =
@@ -672,6 +711,10 @@ async function savePlayer() {
         );
 
 
+    // =========================
+    // VALIDATE GAMES
+    // =========================
+
     if (
         Number.isNaN(desiredGames) ||
         desiredGames < 0
@@ -686,6 +729,10 @@ async function savePlayer() {
     }
 
 
+    // =========================
+    // VALIDATE WINS
+    // =========================
+
     if (
         Number.isNaN(desiredWins) ||
         desiredWins < 0
@@ -699,6 +746,10 @@ async function savePlayer() {
         return;
     }
 
+
+    // =========================
+    // VALIDATE STARS
+    // =========================
 
     if (
         Number.isNaN(desiredStars) ||
@@ -768,7 +819,7 @@ async function savePlayer() {
 
 
     // =========================
-    // GET ACTUAL GAME STATS
+    // GET REAL GAME TOTALS
     // =========================
 
     const actualStats =
@@ -797,7 +848,7 @@ async function savePlayer() {
 
 
     // =========================
-    // DISABLE BUTTON
+    // SAVE
     // =========================
 
     savePlayerButton.disabled =
@@ -810,12 +861,7 @@ async function savePlayer() {
 
     try {
 
-        // =========================
-        // UPDATE SUPABASE
-        // =========================
-
         const {
-            data,
             error
         } = await supabaseClient
             .from("players")
@@ -836,16 +882,12 @@ async function savePlayer() {
             .eq(
                 "id",
                 editingPlayerId
-            )
-            .select(`
-                id,
-                name,
-                games_played_adjustment,
-                wins_adjustment,
-                stars_adjustment
-            `)
-            .single();
+            );
 
+
+        // =========================
+        // CHECK ERROR
+        // =========================
 
         if (error) {
 
@@ -859,23 +901,23 @@ async function savePlayer() {
         // =========================
 
         player.name =
-            data.name;
+            name;
 
 
         player.games_played_adjustment =
-            data.games_played_adjustment;
+            gamesAdjustment;
 
 
         player.wins_adjustment =
-            data.wins_adjustment;
+            winsAdjustment;
 
 
         player.stars_adjustment =
-            data.stars_adjustment;
+            starsAdjustment;
 
 
         // =========================
-        // CLOSE POPUP
+        // CLOSE
         // =========================
 
         closeEditPlayer();
@@ -913,111 +955,6 @@ async function savePlayer() {
             "Save";
 
     }
-}
-
-
-// =========================
-// GET ACTUAL STATS
-// WITHOUT ADJUSTMENTS
-// =========================
-
-function getActualPlayerStats(
-    playerId
-) {
-
-    let gamesPlayed = 0;
-
-    let wins = 0;
-
-    let stars = 0;
-
-
-    allGames.forEach(
-        game => {
-
-            // =========================
-            // GAMES
-            // =========================
-
-            const playerIds =
-                Array.isArray(
-                    game.player_ids
-                )
-                    ? game.player_ids
-                    : [];
-
-
-            const played =
-                playerIds.some(
-                    id =>
-
-                        String(id) ===
-                        String(playerId)
-                );
-
-
-            if (played) {
-
-                gamesPlayed++;
-
-            }
-
-
-            // =========================
-            // WINS
-            // =========================
-
-            if (
-                game.winner_id &&
-                String(game.winner_id) ===
-                    String(playerId)
-            ) {
-
-                wins++;
-
-            }
-
-
-            // =========================
-            // STARS
-            // =========================
-
-            if (
-                game.stars &&
-                typeof game.stars ===
-                    "object"
-            ) {
-
-                const playerStars =
-                    game.stars[playerId];
-
-
-                if (
-                    playerStars !== undefined
-                ) {
-
-                    stars +=
-                        Number(
-                            playerStars
-                        ) || 0;
-
-                }
-
-            }
-
-        }
-    );
-
-
-    return {
-
-        gamesPlayed,
-
-        wins,
-
-        stars
-
-    };
 }
 
 
@@ -1060,6 +997,28 @@ editPlayerName.addEventListener(
 
         if (
             event.key === "Escape"
+        ) {
+
+            closeEditPlayer();
+
+        }
+
+    }
+);
+
+
+// =========================
+// CLOSE POPUP BY CLICKING
+// OUTSIDE
+// =========================
+
+editPlayerPopup.addEventListener(
+    "click",
+    function(event) {
+
+        if (
+            event.target ===
+            editPlayerPopup
         ) {
 
             closeEditPlayer();
