@@ -307,11 +307,6 @@ function getPlayerStats(
             player.stars_adjustment
         ) || 0;
 
-    const winPercentage =
-    gamesPlayed > 0
-        ? (wins / gamesPlayed) * 100
-        : 0;
-
 
     let gamesPlayed =
         actualStats.gamesPlayed +
@@ -351,6 +346,13 @@ function getPlayerStats(
             0,
             stars
         );
+
+    
+    const winPercentage =
+    gamesPlayed > 0
+        ? (wins / gamesPlayed) * 100
+        : 0;
+
         
 
 
