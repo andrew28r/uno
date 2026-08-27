@@ -27,49 +27,103 @@ h1 {
 
 
 /* =========================
-   STATS CONTAINER
+   STATS TABLE
 ========================= */
 
 #stats {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 15px;
-
     width: 100%;
 
-    max-width: 900px;
+    max-width: 950px;
 
     margin: 0 auto;
+
+    background: white;
+
+    border: 1px solid #ccc;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 
 /* =========================
-   PLAYER CARD
+   TABLE HEADER
 ========================= */
 
-.player-stat {
-    position: relative;
+.stats-header {
+    display: grid;
 
-    width: 100%;
+    grid-template-columns:
+        minmax(180px, 2fr)
+        1fr
+        1fr
+        1fr
+        1fr
+        90px;
 
-    min-height: 130px;
+    align-items: center;
 
-    padding: 20px;
+    min-height: 55px;
+
+    padding: 0 15px;
 
     box-sizing: border-box;
 
+    background: #eeeeee;
+
+    border-bottom: 1px solid #ccc;
+
+    font-size: 16px;
+
+    font-weight: bold;
+}
+
+
+.stats-header > div {
+    text-align: center;
+}
+
+
+.stats-header .header-player {
     text-align: left;
+}
 
-    border: 1px solid #ccc;
 
-    border-radius: 14px;
+/* =========================
+   PLAYER ROW
+========================= */
+
+.player-stat {
+    display: grid;
+
+    grid-template-columns:
+        minmax(180px, 2fr)
+        1fr
+        1fr
+        1fr
+        1fr
+        90px;
+
+    align-items: center;
+
+    min-height: 70px;
+
+    padding: 0 15px;
+
+    box-sizing: border-box;
+
+    border-bottom: 1px solid #ddd;
 
     background: white;
+}
 
-    box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.12);
+
+.player-stat:last-child {
+    border-bottom: none;
 }
 
 
@@ -78,11 +132,9 @@ h1 {
 ========================= */
 
 .player-stat-name {
-    margin-bottom: 15px;
+    text-align: left;
 
-    padding-right: 90px;
-
-    font-size: 24px;
+    font-size: 19px;
 
     font-weight: bold;
 
@@ -91,39 +143,26 @@ h1 {
     text-overflow: ellipsis;
 
     white-space: nowrap;
+
+    padding-right: 10px;
 }
 
 
 /* =========================
-   STATS ROW
-========================= */
-
-.stat-row {
-    display: flex;
-
-    align-items: center;
-
-    gap: 30px;
-
-    flex-wrap: wrap;
-}
-
-
-/* =========================
-   INDIVIDUAL STAT
+   STAT VALUES
 ========================= */
 
 .stat {
+    text-align: center;
+
     font-size: 18px;
 
-    color: #444;
+    color: #111;
 }
 
 
 .stat strong {
-    color: #111;
-
-    font-size: 22px;
+    font-size: 20px;
 }
 
 
@@ -132,23 +171,17 @@ h1 {
 ========================= */
 
 .edit-player-button {
-    position: absolute;
-
-    top: 20px;
-
-    right: 20px;
-
     width: 70px;
 
-    height: 40px;
+    height: 38px;
 
     padding: 0;
 
-    margin: 0;
+    margin: 0 auto;
 
     font-family: Arial, sans-serif;
 
-    font-size: 16px;
+    font-size: 15px;
 
     border: 1px solid #ccc;
 
@@ -176,12 +209,6 @@ h1 {
 
 .no-players {
     padding: 40px;
-
-    border: 1px solid #ccc;
-
-    border-radius: 14px;
-
-    background: white;
 
     color: #777;
 
@@ -230,6 +257,8 @@ h1 {
     background: white;
 
     border-radius: 10px;
+
+    text-align: left;
 }
 
 
@@ -238,20 +267,37 @@ h1 {
 
     margin-bottom: 20px;
 
+    text-align: center;
+
     font-size: 24px;
 }
 
 
 /* =========================
-   PLAYER NAME INPUT
+   PLAYER NAME
 ========================= */
+
+.popup-content > label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    color: #444;
+}
+
 
 #editPlayerName {
     width: 100%;
 
-    padding: 12px;
+    height: 44px;
 
-    margin-bottom: 15px;
+    padding: 10px;
+
+    margin-bottom: 18px;
 
     box-sizing: border-box;
 
@@ -397,6 +443,42 @@ h1 {
 
 
 /* =========================
+   DEACTIVATE BUTTON
+========================= */
+
+#deletePlayerButton {
+    margin-top: 20px;
+
+    background: white;
+
+    color: #b00020;
+
+    border-color: #b00020;
+
+    font-weight: bold;
+}
+
+
+#deletePlayerButton:hover {
+    background: #fff0f0;
+
+    color: #900018;
+}
+
+
+#deletePlayerButton:active {
+    background: #ffe0e0;
+}
+
+
+#deletePlayerButton:disabled {
+    opacity: 0.6;
+
+    cursor: wait;
+}
+
+
+/* =========================
    HIDDEN
 ========================= */
 
@@ -409,59 +491,58 @@ h1 {
    MOBILE
 ========================= */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
     body {
-        padding: 15px;
+        padding: 10px;
     }
 
 
     h1 {
         font-size: 28px;
 
-        margin-bottom: 25px;
+        margin-bottom: 20px;
+    }
+
+
+    #stats {
+        overflow-x: auto;
+    }
+
+
+    .stats-header,
+    .player-stat {
+
+        min-width: 700px;
+
+        grid-template-columns:
+            180px
+            105px
+            105px
+            105px
+            105px
+            90px;
+
     }
 
 
     .player-stat {
-        min-height: 140px;
-
-        padding: 18px;
+        min-height: 65px;
     }
 
 
     .player-stat-name {
-        font-size: 21px;
-
-        padding-right: 75px;
-    }
-
-
-    .stat-row {
-        gap: 15px;
+        font-size: 18px;
     }
 
 
     .stat {
-        font-size: 16px;
+        font-size: 17px;
     }
 
 
     .stat strong {
-        font-size: 20px;
-    }
-
-
-    .edit-player-button {
-        top: 18px;
-
-        right: 18px;
-
-        width: 60px;
-
-        height: 36px;
-
-        font-size: 15px;
+        font-size: 19px;
     }
 
 

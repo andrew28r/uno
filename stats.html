@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,7 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>UNO Stats</title>
+    <title>Player Stats</title>
 
     <link
         rel="stylesheet"
@@ -18,7 +17,6 @@
     >
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 </head>
 
 
@@ -26,6 +24,10 @@
 
     <h1>Player Stats</h1>
 
+
+    <!-- =========================
+         STATS TABLE
+    ========================== -->
 
     <div id="stats"></div>
 
@@ -45,6 +47,10 @@
 
 
             <!-- PLAYER NAME -->
+
+            <label for="editPlayerName">
+                Player Name
+            </label>
 
             <input
                 type="text"
@@ -108,7 +114,7 @@
             </div>
 
 
-            <!-- SAVE -->
+            <!-- BUTTONS -->
 
             <button
                 id="savePlayerButton"
@@ -118,13 +124,21 @@
             </button>
 
 
-            <!-- CANCEL -->
-
             <button
                 id="closeEditPlayerButton"
                 type="button"
             >
                 Cancel
+            </button>
+
+
+            <!-- DEACTIVATE -->
+
+            <button
+                id="deletePlayerButton"
+                type="button"
+            >
+                Deactivate Player
             </button>
 
         </div>

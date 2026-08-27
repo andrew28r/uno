@@ -5,10 +5,8 @@
 const SUPABASE_URL =
     "https://imglcipdppttweycvcjk.supabase.co";
 
-
 const SUPABASE_KEY =
     "sb_publishable_yXgJT5rluBoDaw_EjAKyGA_nlQzhPUw";
-
 
 const supabaseClient =
     supabase.createClient(
@@ -33,84 +31,70 @@ let selectedWinnerId = null;
 const playersContainer =
     document.getElementById("players");
 
-
 const recordGameButton =
     document.getElementById(
         "recordGameButton"
     );
-
 
 const playerPopup =
     document.getElementById(
         "playerPopup"
     );
 
-
 const existingPlayersContainer =
     document.getElementById(
         "existingPlayers"
     );
-
 
 const createPlayerButton =
     document.getElementById(
         "createPlayerButton"
     );
 
-
 const closePlayerPopupButton =
     document.getElementById(
         "closePlayerPopup"
     );
-
 
 const newPlayerPopup =
     document.getElementById(
         "newPlayerPopup"
     );
 
-
 const newPlayerName =
     document.getElementById(
         "newPlayerName"
     );
-
 
 const saveNewPlayerButton =
     document.getElementById(
         "saveNewPlayerButton"
     );
 
-
 const closeNewPlayerPopupButton =
     document.getElementById(
         "closeNewPlayerPopup"
     );
-
 
 const winnerPopup =
     document.getElementById(
         "winnerPopup"
     );
 
-
 const winnerPlayersContainer =
     document.getElementById(
         "winnerPlayers"
     );
-
 
 const starPlayersContainer =
     document.getElementById(
         "starPlayers"
     );
 
-
 const saveGameButton =
     document.getElementById(
         "saveGameButton"
     );
-
 
 const cancelWinnerButton =
     document.getElementById(
@@ -118,8 +102,61 @@ const cancelWinnerButton =
     );
 
 
+const gameMessage =
+    document.getElementById(
+        "gameMessage"
+    );
+
+
+const newPlayerMessage =
+    document.getElementById(
+        "newPlayerMessage"
+    );
+
+
+const gameResultMessage =
+    document.getElementById(
+        "gameResultMessage"
+    );
+
 // =========================
-// GET PLAYERS FROM SUPABASE
+// SHOW MESSAGE
+// =========================
+
+function showMessage(
+    element,
+    message
+) {
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        message;
+}
+
+
+// =========================
+// CLEAR MESSAGE
+// =========================
+
+function clearMessage(
+    element
+) {
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        "";
+}
+
+// =========================
+// GET ACTIVE PLAYERS
 // =========================
 
 async function getPlayers() {
@@ -129,9 +166,9 @@ async function getPlayers() {
         error
     } = await supabaseClient
         .from("players")
-        .select("id, name")
+        .select("id, name, active")
+        .eq("active", true)
         .order("name");
-
 
     if (error) {
 
@@ -140,13 +177,13 @@ async function getPlayers() {
             error
         );
 
-        alert(
+        showMessage(
+            gameMessage,
             "Could not load players."
         );
 
         return [];
     }
-
 
     return data || [];
 }
@@ -165,7 +202,6 @@ async function getWinCounts() {
         .from("games")
         .select("winner_id");
 
-
     if (error) {
 
         console.error(
@@ -176,9 +212,7 @@ async function getWinCounts() {
         return {};
     }
 
-
     const winCounts = {};
-
 
     (data || []).forEach(
         game => {
@@ -186,7 +220,6 @@ async function getWinCounts() {
             if (!game.winner_id) {
                 return;
             }
-
 
             if (
                 !winCounts[game.winner_id]
@@ -197,12 +230,10 @@ async function getWinCounts() {
 
             }
 
-
             winCounts[game.winner_id]++;
 
         }
     );
-
 
     return winCounts;
 }
@@ -221,7 +252,6 @@ async function getStarCounts() {
         .from("games")
         .select("stars");
 
-
     if (error) {
 
         console.error(
@@ -232,9 +262,7 @@ async function getStarCounts() {
         return {};
     }
 
-
     const starCounts = {};
-
 
     (data || []).forEach(
         game => {
@@ -243,7 +271,6 @@ async function getStarCounts() {
                 return;
             }
 
-
             Object.entries(
                 game.stars
             ).forEach(
@@ -251,7 +278,6 @@ async function getStarCounts() {
 
                     const numberOfStars =
                         Number(stars) || 0;
-
 
                     if (
                         !starCounts[playerId]
@@ -262,7 +288,6 @@ async function getStarCounts() {
 
                     }
 
-
                     starCounts[playerId] +=
                         numberOfStars;
 
@@ -271,7 +296,6 @@ async function getStarCounts() {
 
         }
     );
-
 
     return starCounts;
 }
@@ -284,7 +308,6 @@ async function getStarCounts() {
 async function renderPlayers() {
 
     playersContainer.innerHTML = "";
-
 
     const [
         winCounts,
@@ -308,10 +331,8 @@ async function renderPlayers() {
             const wins =
                 winCounts[player.id] || 0;
 
-
             const stars =
                 starCounts[player.id] || 0;
-
 
             const card =
                 createPlayerCard(
@@ -320,7 +341,6 @@ async function renderPlayers() {
                     wins,
                     stars
                 );
-
 
             playersContainer.appendChild(
                 card
@@ -337,10 +357,8 @@ async function renderPlayers() {
     const emptyCard =
         document.createElement("div");
 
-
     emptyCard.className =
         "player empty-player";
-
 
     emptyCard.innerHTML = `
         <div class="add-text">
@@ -348,12 +366,10 @@ async function renderPlayers() {
         </div>
     `;
 
-
     emptyCard.addEventListener(
         "click",
         openAddPlayerPopup
     );
-
 
     playersContainer.appendChild(
         emptyCard
@@ -375,10 +391,8 @@ function createPlayerCard(
     const card =
         document.createElement("div");
 
-
     card.className =
         "player";
-
 
     card.innerHTML = `
 
@@ -410,14 +424,13 @@ function createPlayerCard(
 
 
     // =========================
-    // REMOVE
+    // REMOVE FROM CURRENT GAME
     // =========================
 
     const removeButton =
         card.querySelector(
             ".remove-button"
         );
-
 
     removeButton.addEventListener(
         "click",
@@ -430,13 +443,13 @@ function createPlayerCard(
         }
     );
 
-
     return card;
 }
 
 
 // =========================
 // REMOVE PLAYER
+// FROM CURRENT GAME ONLY
 // =========================
 
 function removePlayer(index) {
@@ -445,12 +458,10 @@ function removePlayer(index) {
         return;
     }
 
-
     players.splice(
         index,
         1
     );
-
 
     renderPlayers();
 }
@@ -464,7 +475,6 @@ async function openAddPlayerPopup() {
 
     const databasePlayers =
         await getPlayers();
-
 
     existingPlayersContainer.innerHTML =
         "";
@@ -482,8 +492,12 @@ async function openAddPlayerPopup() {
                 return !players.some(
                     currentPlayer =>
 
-                        currentPlayer.id ===
-                        databasePlayer.id
+                        String(
+                            currentPlayer.id
+                        ) ===
+                        String(
+                            databasePlayer.id
+                        )
                 );
 
             }
@@ -501,10 +515,8 @@ async function openAddPlayerPopup() {
         const message =
             document.createElement("p");
 
-
         message.textContent =
             "No available players.";
-
 
         existingPlayersContainer
             .appendChild(
@@ -515,7 +527,7 @@ async function openAddPlayerPopup() {
 
 
     // =========================
-    // SHOW AVAILABLE PLAYERS
+    // SHOW ACTIVE PLAYERS
     // =========================
 
     else {
@@ -528,14 +540,11 @@ async function openAddPlayerPopup() {
                         "button"
                     );
 
-
                 button.type =
                     "button";
 
-
                 button.textContent =
                     player.name;
-
 
                 button.addEventListener(
                     "click",
@@ -547,7 +556,6 @@ async function openAddPlayerPopup() {
 
                     }
                 );
-
 
                 existingPlayersContainer
                     .appendChild(
@@ -574,14 +582,25 @@ function addExistingPlayer(
     player
 ) {
 
+    // Safety check:
+    // Only active players can be added.
+
+    if (player.active === false) {
+        return;
+    }
+
+
     const alreadyPlaying =
         players.some(
             currentPlayer =>
 
-                currentPlayer.id ===
-                player.id
+                String(
+                    currentPlayer.id
+                ) ===
+                String(
+                    player.id
+                )
         );
-
 
     if (alreadyPlaying) {
         return;
@@ -599,7 +618,6 @@ function addExistingPlayer(
 
     closeAddPlayerPopup();
 
-
     renderPlayers();
 }
 
@@ -614,14 +632,11 @@ createPlayerButton.addEventListener(
 
         closeAddPlayerPopup();
 
-
         newPlayerName.value = "";
-
 
         newPlayerPopup.classList.remove(
             "hidden"
         );
-
 
         newPlayerName.focus();
 
@@ -635,19 +650,23 @@ createPlayerButton.addEventListener(
 
 async function createNewPlayer() {
 
+
+    clearMessage(
+        newPlayerMessage
+    );
+
+
     const name =
         newPlayerName.value.trim();
 
-
     if (!name) {
 
-        alert(
+        showMessage(
+            newPlayerMessage,
             "Enter a player name."
         );
 
-
         newPlayerName.focus();
-
 
         return;
     }
@@ -657,15 +676,35 @@ async function createNewPlayer() {
     // CHECK EXISTING PLAYERS
     // =========================
 
-    const databasePlayers =
-        await getPlayers();
+    const {
+        data: existingPlayers,
+        error: existingPlayersError
+    } = await supabaseClient
+        .from("players")
+        .select("id, name, active");
+
+    if (existingPlayersError) {
+
+        console.error(
+            "Error checking players:",
+            existingPlayersError
+        );
+
+        showMessage(
+            newPlayerMessage,
+            "Could not check existing players."
+        );
+
+        return;
+    }
 
 
     const alreadyExists =
-        databasePlayers.some(
+        (existingPlayers || []).some(
             player =>
 
                 player.name
+                    .trim()
                     .toLowerCase() ===
                 name.toLowerCase()
         );
@@ -673,17 +712,17 @@ async function createNewPlayer() {
 
     if (alreadyExists) {
 
-        alert(
+        showMessage(
+            newPlayerMessage,
             "That player already exists."
         );
-
 
         return;
     }
 
 
     // =========================
-    // INSERT PLAYER
+    // INSERT ACTIVE PLAYER
     // =========================
 
     const {
@@ -693,10 +732,12 @@ async function createNewPlayer() {
         .from("players")
         .insert({
 
-            name: name
+            name: name,
+
+            active: true
 
         })
-        .select("id, name")
+        .select("id, name, active")
         .single();
 
 
@@ -707,11 +748,10 @@ async function createNewPlayer() {
             error
         );
 
-
-        alert(
+        showMessage(
+            newPlayerMessage,
             "Could not create player."
         );
-
 
         return;
     }
@@ -726,7 +766,9 @@ async function createNewPlayer() {
 
         id: data.id,
 
-        name: data.name
+        name: data.name,
+
+        active: data.active
 
     });
 
@@ -737,10 +779,9 @@ async function createNewPlayer() {
     closeNewPlayerPopupWindow();
 
 
-    // IMPORTANT:
-    // Re-render immediately so
-    // the new player appears
-    // without refreshing.
+    // =========================
+    // REFRESH IMMEDIATELY
+    // =========================
 
     await renderPlayers();
 }
@@ -810,7 +851,6 @@ function closeNewPlayerPopupWindow() {
         "hidden"
     );
 
-
     newPlayerName.value = "";
 }
 
@@ -831,12 +871,21 @@ recordGameButton.addEventListener(
 
 function openWinnerPopup() {
 
-    if (players.length === 0) {
+    clearMessage(
+        gameMessage
+    );
 
-        alert(
-            "Add at least one player first."
+
+    // =========================
+    // REQUIRE AT LEAST 2 PLAYERS
+    // =========================
+
+    if (players.length < 2) {
+
+        showMessage(
+            gameMessage,
+            "You need at least 2 players to start a game."
         );
-
 
         return;
     }
@@ -844,13 +893,9 @@ function openWinnerPopup() {
 
     selectedWinnerId = null;
 
+    winnerPlayersContainer.innerHTML = "";
 
-    winnerPlayersContainer.innerHTML =
-        "";
-
-
-    starPlayersContainer.innerHTML =
-        "";
+    starPlayersContainer.innerHTML = "";
 
 
     // =========================
@@ -861,18 +906,12 @@ function openWinnerPopup() {
         player => {
 
             const button =
-                document.createElement(
-                    "button"
-                );
+                document.createElement("button");
 
-
-            button.type =
-                "button";
-
+            button.type = "button";
 
             button.textContent =
                 player.name;
-
 
             button.addEventListener(
                 "click",
@@ -886,11 +925,9 @@ function openWinnerPopup() {
                 }
             );
 
-
-            winnerPlayersContainer
-                .appendChild(
-                    button
-                );
+            winnerPlayersContainer.appendChild(
+                button
+            );
 
         }
     );
@@ -904,18 +941,13 @@ function openWinnerPopup() {
         player => {
 
             const row =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             row.className =
                 "star-row";
 
-
             row.dataset.playerId =
                 player.id;
-
 
             row.innerHTML = `
 
@@ -933,7 +965,6 @@ function openWinnerPopup() {
                     </button>
 
                     <div class="star-count">
-
 
                         <span class="star-value">
                             0
@@ -958,12 +989,10 @@ function openWinnerPopup() {
                     ".star-minus"
                 );
 
-
             const plusButton =
                 row.querySelector(
                     ".star-plus"
                 );
-
 
             const starValue =
                 row.querySelector(
@@ -982,12 +1011,9 @@ function openWinnerPopup() {
                 "click",
                 function() {
 
-                    if (
-                        starCount > 0
-                    ) {
+                    if (starCount > 0) {
 
                         starCount--;
-
 
                         starValue.textContent =
                             starCount;
@@ -1008,7 +1034,6 @@ function openWinnerPopup() {
 
                     starCount++;
 
-
                     starValue.textContent =
                         starCount;
 
@@ -1016,10 +1041,9 @@ function openWinnerPopup() {
             );
 
 
-            starPlayersContainer
-                .appendChild(
-                    row
-                );
+            starPlayersContainer.appendChild(
+                row
+            );
 
         }
     );
@@ -1074,16 +1098,19 @@ function selectWinner(
 
 async function saveRecordedGame() {
 
+    clearMessage(
+        gameResultMessage
+    );
     // =========================
     // VALIDATE WINNER
     // =========================
 
     if (!selectedWinnerId) {
 
-        alert(
+        showMessage(
+            gameResultMessage,
             "Select a winner first."
         );
-
 
         return;
     }
@@ -1091,10 +1118,10 @@ async function saveRecordedGame() {
 
     if (players.length === 0) {
 
-        alert(
+        showMessage(
+            gameResultMessage,
             "There are no players in the game."
         );
-
 
         return;
     }
@@ -1106,7 +1133,6 @@ async function saveRecordedGame() {
 
     saveGameButton.disabled =
         true;
-
 
     saveGameButton.textContent =
         "Saving...";
@@ -1129,7 +1155,6 @@ async function saveRecordedGame() {
         // =========================
 
         const stars = {};
-
 
         const starRows =
             starPlayersContainer
@@ -1208,7 +1233,6 @@ async function saveRecordedGame() {
             "hidden"
         );
 
-
         selectedWinnerId = null;
 
 
@@ -1227,16 +1251,22 @@ async function saveRecordedGame() {
             players.find(
                 player =>
 
-                    player.id ===
-                    game.winner_id
+                    String(
+                        player.id
+                    ) ===
+                    String(
+                        game.winner_id
+                    )
             );
 
 
         if (winner) {
 
-         /*   alert(
+            /*
+            alert(
                 `${winner.name} won!`
-            );*/
+            );
+            */
 
         }
 
@@ -1249,8 +1279,8 @@ async function saveRecordedGame() {
             error
         );
 
-
-        alert(
+        showMessage(
+            gameResultMessage,
             "Could not save the game."
         );
 
@@ -1260,7 +1290,6 @@ async function saveRecordedGame() {
 
         saveGameButton.disabled =
             false;
-
 
         saveGameButton.textContent =
             "Save Game";
@@ -1291,7 +1320,6 @@ cancelWinnerButton.addEventListener(
             "hidden"
         );
 
-
         selectedWinnerId = null;
 
     }
@@ -1309,10 +1337,8 @@ function escapeHtml(value) {
             "div"
         );
 
-
     div.textContent =
         value;
-
 
     return div.innerHTML;
 }
@@ -1322,4 +1348,7 @@ function escapeHtml(value) {
 // INITIAL LOAD
 // =========================
 
+players = [];
+
 renderPlayers();
+

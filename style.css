@@ -773,3 +773,23 @@ h1 {
     }
 
 }
+
+/* =========================
+   MESSAGE TEXT
+========================= */
+
+.message {
+    min-height: 22px;
+
+    margin: 8px auto 0;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #c00;
+
+    text-align: center;
+}

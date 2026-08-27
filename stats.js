@@ -80,6 +80,12 @@ const closeEditPlayerButton =
     );
 
 
+const deletePlayerButton =
+    document.getElementById(
+        "deletePlayerButton"
+    );
+
+
 // =========================
 // LOAD STATS
 // =========================
@@ -96,7 +102,7 @@ async function loadStats() {
     try {
 
         // =========================
-        // LOAD PLAYERS
+        // LOAD ACTIVE PLAYERS
         // =========================
 
         const {
@@ -107,11 +113,18 @@ async function loadStats() {
             .select(`
                 id,
                 name,
+                active,
                 games_played_adjustment,
                 wins_adjustment,
                 stars_adjustment
             `)
-            .order("name");
+            .eq(
+                "active",
+                true
+            )
+            .order(
+                "name"
+            );
 
 
         if (playersError) {
@@ -169,6 +182,7 @@ async function loadStats() {
         `;
 
     }
+
 }
 
 
@@ -273,11 +287,12 @@ function getActualPlayerStats(
         stars
 
     };
+
 }
 
 
 // =========================
-// GET DISPLAYED PLAYER STATS
+// GET PLAYER STATS
 // =========================
 
 function getPlayerStats(
@@ -323,10 +338,6 @@ function getPlayerStats(
         starsAdjustment;
 
 
-    // =========================
-    // PREVENT NEGATIVE VALUES
-    // =========================
-
     gamesPlayed =
         Math.max(
             0,
@@ -347,21 +358,32 @@ function getPlayerStats(
             stars
         );
 
-    
-    const winPercentage =
-    gamesPlayed > 0
-        ? (wins / gamesPlayed) * 100
-        : 0;
 
-        
+    // =========================
+    // WIN PERCENTAGE
+    // =========================
+
+    const winPercentage =
+        gamesPlayed > 0
+            ? (
+                wins /
+                gamesPlayed
+            ) * 100
+            : 0;
 
 
     return {
+
         gamesPlayed,
+
         wins,
+
         stars,
+
         winPercentage
+
     };
+
 }
 
 
@@ -380,34 +402,29 @@ function renderStats() {
 
         statsContainer.innerHTML = `
             <div class="no-players">
-                No players found.
+                No active players found.
             </div>
         `;
-
 
         return;
     }
 
 
     // =========================
-    // ADD STATS TO PLAYERS
+    // ADD STATS
     // =========================
 
     const playersWithStats =
         allPlayers.map(
             player => {
 
-                const stats =
-                    getPlayerStats(
-                        player
-                    );
-
-
                 return {
 
                     ...player,
 
-                    ...stats
+                    ...getPlayerStats(
+                        player
+                    )
 
                 };
 
@@ -416,13 +433,11 @@ function renderStats() {
 
 
     // =========================
-    // SORT PLAYERS
+    // SORT
     // =========================
 
     playersWithStats.sort(
         (a, b) => {
-
-            // Wins
 
             if (
                 b.wins !==
@@ -437,8 +452,6 @@ function renderStats() {
             }
 
 
-            // Stars
-
             if (
                 b.stars !==
                 a.stars
@@ -452,8 +465,6 @@ function renderStats() {
             }
 
 
-            // Name
-
             return a.name.localeCompare(
                 b.name
             );
@@ -463,84 +474,126 @@ function renderStats() {
 
 
     // =========================
-    // CREATE CARDS
+    // HEADER
     // =========================
 
-    playersWithStats.forEach(
-        player => {
-
-            const card =
-                createPlayerCard(
-                    player
-                );
-
-
-            statsContainer.appendChild(
-                card
-            );
-
-        }
-    );
-}
-
-
-// =========================
-// CREATE PLAYER CARD
-// =========================
-
-function createPlayerCard(
-    player
-) {
-
-    const card =
+    const header =
         document.createElement(
             "div"
         );
 
 
-    card.className =
+    header.className =
+        "stats-header";
+
+
+    header.innerHTML = `
+
+        <div class="header-player">
+            Player
+        </div>
+
+        <div>
+            Games
+        </div>
+
+        <div>
+            Wins
+        </div>
+
+        <div>
+            Win %
+        </div>
+
+        <div>
+            Stars
+        </div>
+
+        <div>
+            Edit
+        </div>
+
+    `;
+
+
+    statsContainer.appendChild(
+        header
+    );
+
+
+    // =========================
+    // PLAYER ROWS
+    // =========================
+
+    playersWithStats.forEach(
+        player => {
+
+            const row =
+                createPlayerRow(
+                    player
+                );
+
+
+            statsContainer.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+// =========================
+// CREATE PLAYER ROW
+// =========================
+
+function createPlayerRow(
+    player
+) {
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
         "player-stat";
 
 
-    card.innerHTML = `
+    row.innerHTML = `
 
         <div class="player-stat-name">
             ${escapeHtml(player.name)}
         </div>
 
 
-        <div class="stat-row">
-
-            <div class="stat">
-                Games:
-                <strong>
-                    ${player.gamesPlayed}
-                </strong>
-            </div>
+        <div class="stat">
+            <strong>
+                ${player.gamesPlayed}
+            </strong>
+        </div>
 
 
-            <div class="stat">
-                Wins:
-                <strong>
-                    ${player.wins}
-                </strong>
-            </div>
-
-            <div class="stat">
-                Win %:
-                <strong>
-                    ${player.winPercentage.toFixed(1)}%
-                </strong>
-            </div>
+        <div class="stat">
+            <strong>
+                ${player.wins}
+            </strong>
+        </div>
 
 
-            <div class="stat">
-                Stars:
-                <strong>
-                    ${player.stars}
-                </strong>
-            </div>
+        <div class="stat">
+            <strong>
+                ${player.winPercentage.toFixed(1)}%
+            </strong>
+        </div>
 
+
+        <div class="stat">
+            <strong>
+                ${player.stars}
+            </strong>
         </div>
 
 
@@ -554,12 +607,8 @@ function createPlayerCard(
     `;
 
 
-    // =========================
-    // EDIT BUTTON
-    // =========================
-
     const editButton =
-        card.querySelector(
+        row.querySelector(
             ".edit-player-button"
         );
 
@@ -576,7 +625,8 @@ function createPlayerCard(
     );
 
 
-    return card;
+    return row;
+
 }
 
 
@@ -592,17 +642,9 @@ function openEditPlayer(
         player.id;
 
 
-    // =========================
-    // PLAYER NAME
-    // =========================
-
     editPlayerName.value =
         player.name;
 
-
-    // =========================
-    // CURRENT STATS
-    // =========================
 
     editGames.value =
         player.gamesPlayed;
@@ -616,10 +658,6 @@ function openEditPlayer(
         player.stars;
 
 
-    // =========================
-    // OPEN POPUP
-    // =========================
-
     editPlayerPopup.classList.remove(
         "hidden"
     );
@@ -627,8 +665,8 @@ function openEditPlayer(
 
     editPlayerName.focus();
 
-
     editPlayerName.select();
+
 }
 
 
@@ -661,6 +699,7 @@ function closeEditPlayer() {
 
     editStars.value =
         "";
+
 }
 
 
@@ -673,12 +712,9 @@ async function savePlayer() {
     if (!editingPlayerId) {
 
         return;
+
     }
 
-
-    // =========================
-    // NAME
-    // =========================
 
     const name =
         editPlayerName.value.trim();
@@ -690,17 +726,12 @@ async function savePlayer() {
             "Enter a player name."
         );
 
-
         editPlayerName.focus();
 
-
         return;
+
     }
 
-
-    // =========================
-    // NUMBERS
-    // =========================
 
     const desiredGames =
         parseInt(
@@ -723,10 +754,6 @@ async function savePlayer() {
         );
 
 
-    // =========================
-    // VALIDATE GAMES
-    // =========================
-
     if (
         Number.isNaN(desiredGames) ||
         desiredGames < 0
@@ -736,14 +763,10 @@ async function savePlayer() {
             "Enter a valid number of games."
         );
 
-
         return;
+
     }
 
-
-    // =========================
-    // VALIDATE WINS
-    // =========================
 
     if (
         Number.isNaN(desiredWins) ||
@@ -754,14 +777,10 @@ async function savePlayer() {
             "Enter a valid number of wins."
         );
 
-
         return;
+
     }
 
-
-    // =========================
-    // VALIDATE STARS
-    // =========================
 
     if (
         Number.isNaN(desiredStars) ||
@@ -772,13 +791,13 @@ async function savePlayer() {
             "Enter a valid number of stars."
         );
 
-
         return;
+
     }
 
 
     // =========================
-    // CHECK DUPLICATE NAME
+    // DUPLICATE NAME
     // =========================
 
     const duplicate =
@@ -801,8 +820,8 @@ async function savePlayer() {
             "That player already exists."
         );
 
-
         return;
+
     }
 
 
@@ -825,13 +844,13 @@ async function savePlayer() {
             "Player could not be found."
         );
 
-
         return;
+
     }
 
 
     // =========================
-    // GET REAL GAME TOTALS
+    // ACTUAL STATS
     // =========================
 
     const actualStats =
@@ -841,7 +860,7 @@ async function savePlayer() {
 
 
     // =========================
-    // CALCULATE ADJUSTMENTS
+    // ADJUSTMENTS
     // =========================
 
     const gamesAdjustment =
@@ -874,6 +893,7 @@ async function savePlayer() {
     try {
 
         const {
+            data,
             error
         } = await supabaseClient
             .from("players")
@@ -894,12 +914,16 @@ async function savePlayer() {
             .eq(
                 "id",
                 editingPlayerId
-            );
+            )
+            .select(`
+                id,
+                name,
+                active,
+                games_played_adjustment,
+                wins_adjustment,
+                stars_adjustment
+            `);
 
-
-        // =========================
-        // CHECK ERROR
-        // =========================
 
         if (error) {
 
@@ -908,8 +932,20 @@ async function savePlayer() {
         }
 
 
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
+            throw new Error(
+                "No player was updated. Check your Supabase RLS UPDATE policy."
+            );
+
+        }
+
+
         // =========================
-        // UPDATE LOCAL PLAYER
+        // UPDATE LOCAL DATA
         // =========================
 
         player.name =
@@ -928,16 +964,8 @@ async function savePlayer() {
             starsAdjustment;
 
 
-        // =========================
-        // CLOSE
-        // =========================
-
         closeEditPlayer();
 
-
-        // =========================
-        // REFRESH
-        // =========================
 
         renderStats();
 
@@ -967,6 +995,149 @@ async function savePlayer() {
             "Save";
 
     }
+
+}
+
+
+// =========================
+// DEACTIVATE PLAYER
+// =========================
+
+async function deactivatePlayer() {
+
+    if (!editingPlayerId) {
+
+        return;
+
+    }
+
+
+    const player =
+        allPlayers.find(
+            player =>
+
+                String(player.id) ===
+                String(editingPlayerId)
+        );
+
+
+    if (!player) {
+
+        alert(
+            "Player could not be found."
+        );
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            `Deactivate ${player.name}?\n\nThey will be hidden from the player list, but their historical games and stats will remain in the database.`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    deletePlayerButton.disabled =
+        true;
+
+
+    deletePlayerButton.textContent =
+        "Deactivating...";
+
+
+    try {
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("players")
+            .update({
+
+                active: false
+
+            })
+            .eq(
+                "id",
+                editingPlayerId
+            )
+            .select(
+                "id, active"
+            );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        if (
+            !data ||
+            data.length === 0
+        ) {
+
+            throw new Error(
+                "Player was not updated. Check your Supabase RLS UPDATE policy."
+            );
+
+        }
+
+
+        // =========================
+        // REMOVE FROM ACTIVE LIST
+        // =========================
+
+        allPlayers =
+            allPlayers.filter(
+                player =>
+
+                    String(player.id) !==
+                    String(editingPlayerId)
+            );
+
+
+        closeEditPlayer();
+
+
+        renderStats();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error deactivating player:",
+            error
+        );
+
+
+        alert(
+            "Could not deactivate player."
+        );
+
+    }
+
+    finally {
+
+        deletePlayerButton.disabled =
+            false;
+
+
+        deletePlayerButton.textContent =
+            "Deactivate Player";
+
+    }
+
 }
 
 
@@ -987,6 +1158,16 @@ savePlayerButton.addEventListener(
 closeEditPlayerButton.addEventListener(
     "click",
     closeEditPlayer
+);
+
+
+// =========================
+// DEACTIVATE BUTTON
+// =========================
+
+deletePlayerButton.addEventListener(
+    "click",
+    deactivatePlayer
 );
 
 
@@ -1020,8 +1201,7 @@ editPlayerName.addEventListener(
 
 
 // =========================
-// CLOSE POPUP BY CLICKING
-// OUTSIDE
+// CLOSE POPUP OUTSIDE
 // =========================
 
 editPlayerPopup.addEventListener(
@@ -1058,6 +1238,7 @@ function escapeHtml(value) {
 
 
     return div.innerHTML;
+
 }
 
 
