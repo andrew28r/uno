@@ -1234,9 +1234,9 @@ async function saveRecordedGame() {
 
         if (winner) {
 
-            alert(
+         /*   alert(
                 `${winner.name} won!`
-            );
+            );*/
 
         }
 
