@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>UNO Scoreboard</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+
+<body>
+
+    <h1>UNO Scoreboard</h1>
+
+
+    <!-- =========================
+         PLAYERS
+    ========================== -->
+
+    <div id="players"></div>
+
+
+    <!-- =========================
+         RECORD GAME BUTTON
+    ========================== -->
+
+    <button
+        id="recordGameButton"
+        class="record-game-button"
+        type="button"
+    >
+        Record Game
+    </button>
+
+
+    <!-- =========================
+         ADD PLAYER POPUP
+    ========================== -->
+
+    <div
+        id="playerPopup"
+        class="popup hidden"
+    >
+
+        <div class="popup-content">
+
+            <h2>Add Player</h2>
+
+            <div id="existingPlayers"></div>
+
+            <button
+                id="createPlayerButton"
+                type="button"
+            >
+                + Create New Player
+            </button>
+
+            <button
+                id="closePlayerPopup"
+                type="button"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         NEW PLAYER POPUP
+    ========================== -->
+
+    <div
+        id="newPlayerPopup"
+        class="popup hidden"
+    >
+
+        <div class="popup-content">
+
+            <h2>New Player</h2>
+
+            <input
+                type="text"
+                id="newPlayerName"
+                placeholder="Player name"
+                maxlength="30"
+            >
+
+            <button
+                id="saveNewPlayerButton"
+                type="button"
+            >
+                Add Player
+            </button>
+
+            <button
+                id="closeNewPlayerPopup"
+                type="button"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         RECORD GAME POPUP
+    ========================== -->
+
+    <div
+        id="winnerPopup"
+        class="popup hidden"
+    >
+
+        <div class="popup-content game-result-content">
+
+            <h2>Record Game</h2>
+
+            <p class="popup-description">
+                Select the winner and add stars.
+            </p>
+
+
+            <!-- =========================
+                 WINNER
+            ========================== -->
+
+            <h3>Winner</h3>
+
+            <div id="winnerPlayers"></div>
+
+
+            <!-- =========================
+                 STARS
+            ========================== -->
+
+            <h3>Stars</h3>
+
+            <div id="starPlayers"></div>
+
+
+            <!-- =========================
+                 SAVE
+            ========================== -->
+
+            <button
+                id="saveGameButton"
+                class="save-game-button"
+                type="button"
+            >
+                Save Game
+            </button>
+
+            <button
+                id="cancelWinnerButton"
+                type="button"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
