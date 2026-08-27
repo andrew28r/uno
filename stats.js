@@ -307,6 +307,11 @@ function getPlayerStats(
             player.stars_adjustment
         ) || 0;
 
+    const winPercentage =
+    gamesPlayed > 0
+        ? (wins / gamesPlayed) * 100
+        : 0;
+
 
     let gamesPlayed =
         actualStats.gamesPlayed +
@@ -346,16 +351,14 @@ function getPlayerStats(
             0,
             stars
         );
+        
 
 
     return {
-
         gamesPlayed,
-
         wins,
-
-        stars
-
+        stars,
+        winPercentage
     };
 }
 
@@ -518,6 +521,13 @@ function createPlayerCard(
                 Wins:
                 <strong>
                     ${player.wins}
+                </strong>
+            </div>
+
+            <div class="stat">
+                Win %:
+                <strong>
+                    ${player.winPercentage.toFixed(1)}%
                 </strong>
             </div>
 
