@@ -1,0 +1,474 @@
+/* =========================
+   PAGE
+========================= */
+
+body {
+    font-family: Arial, sans-serif;
+
+    text-align: center;
+
+    margin: 0;
+
+    padding: 20px;
+
+    background: #f5f5f5;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+h1 {
+    margin: 10px 0 30px;
+
+    font-size: 32px;
+}
+
+
+/* =========================
+   STATS CONTAINER
+========================= */
+
+#stats {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+    width: 100%;
+
+    max-width: 900px;
+
+    margin: 0 auto;
+}
+
+
+/* =========================
+   PLAYER STAT CARD
+========================= */
+
+.player-stat {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 130px;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    text-align: left;
+
+    border: 1px solid #ccc;
+
+    border-radius: 14px;
+
+    background: white;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================
+   PLAYER NAME
+========================= */
+
+.player-stat-name {
+    margin-bottom: 15px;
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    padding-right: 90px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================
+   STAT ROW
+========================= */
+
+.stat-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 30px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================
+   INDIVIDUAL STAT
+========================= */
+
+.stat {
+    font-size: 18px;
+
+    color: #444;
+}
+
+
+.stat strong {
+    color: #111;
+
+    font-size: 22px;
+}
+
+
+/* =========================
+   EDIT BUTTON
+========================= */
+
+.edit-player-button {
+    position: absolute;
+
+    top: 20px;
+
+    right: 20px;
+
+    width: 70px;
+
+    height: 40px;
+
+    padding: 0;
+
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 16px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 7px;
+
+    background: white;
+
+    cursor: pointer;
+}
+
+
+.edit-player-button:hover {
+    background: #eee;
+}
+
+
+.edit-player-button:active {
+    background: #ddd;
+}
+
+
+/* =========================
+   NO PLAYERS
+========================= */
+
+.no-players {
+    padding: 40px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 14px;
+
+    background: white;
+
+    color: #777;
+
+    font-size: 20px;
+}
+
+
+/* =========================
+   POPUP
+========================= */
+
+.popup {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    z-index: 100;
+}
+
+
+/* =========================
+   POPUP CONTENT
+========================= */
+
+.popup-content {
+    width: 350px;
+
+    max-width: 100%;
+
+    padding: 25px;
+
+    box-sizing: border-box;
+
+    background: white;
+
+    border-radius: 10px;
+}
+
+
+.popup-content h2 {
+    margin-top: 0;
+
+    margin-bottom: 20px;
+
+    font-size: 24px;
+}
+
+
+/* =========================
+   PLAYER NAME INPUT
+========================= */
+
+#editPlayerName {
+    width: 100%;
+
+    padding: 12px;
+
+    margin-bottom: 15px;
+
+    box-sizing: border-box;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 18px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 6px;
+
+    outline: none;
+}
+
+
+#editPlayerName:focus {
+    border-color: #777;
+}
+
+
+/* =========================
+   EDIT STAT
+========================= */
+
+.edit-stat {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 12px;
+
+    gap: 15px;
+}
+
+
+.edit-stat label {
+    font-size: 17px;
+
+    font-weight: bold;
+
+    color: #444;
+}
+
+
+.edit-stat input {
+    width: 90px;
+
+    height: 42px;
+
+    padding: 8px;
+
+    box-sizing: border-box;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 18px;
+
+    text-align: center;
+
+    border: 1px solid #ccc;
+
+    border-radius: 6px;
+
+    outline: none;
+}
+
+
+.edit-stat input:focus {
+    border-color: #777;
+}
+
+
+/* =========================
+   POPUP BUTTONS
+========================= */
+
+.popup-content button {
+    display: block;
+
+    width: 100%;
+
+    min-height: 50px;
+
+    margin-top: 10px;
+
+    padding: 10px;
+
+    box-sizing: border-box;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 18px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 8px;
+
+    background: white;
+
+    cursor: pointer;
+}
+
+
+.popup-content button:hover {
+    background: #eee;
+}
+
+
+.popup-content button:active {
+    background: #ddd;
+}
+
+
+/* =========================
+   SAVE BUTTON
+========================= */
+
+#savePlayerButton {
+    margin-top: 20px;
+
+    background: #222;
+
+    color: white;
+
+    border-color: #222;
+
+    font-weight: bold;
+}
+
+
+#savePlayerButton:hover {
+    background: #333;
+}
+
+
+#savePlayerButton:disabled {
+    opacity: 0.6;
+
+    cursor: wait;
+}
+
+
+/* =========================
+   HIDDEN
+========================= */
+
+.hidden {
+    display: none;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+
+    h1 {
+        font-size: 28px;
+
+        margin-bottom: 25px;
+    }
+
+
+    .player-stat {
+        min-height: 140px;
+
+        padding: 18px;
+    }
+
+
+    .player-stat-name {
+        font-size: 21px;
+
+        padding-right: 75px;
+    }
+
+
+    .stat-row {
+        gap: 15px;
+    }
+
+
+    .stat {
+        font-size: 16px;
+    }
+
+
+    .stat strong {
+        font-size: 20px;
+    }
+
+
+    .edit-player-button {
+        top: 18px;
+
+        right: 18px;
+
+        width: 60px;
+
+        height: 36px;
+
+        font-size: 15px;
+    }
+
+
+    .popup-content {
+        width: 95vw;
+
+        padding: 20px;
+    }
+
+}
